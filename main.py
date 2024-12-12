@@ -7,6 +7,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import requests
+from bs4 import BeautifulSoup
 
 class MyApp(ctk.CTk):
     def __init__(self):
@@ -24,10 +29,10 @@ class MyApp(ctk.CTk):
         self.btn1 = ctk.CTkButton(self.sidebar, text="YouTube", fg_color="#FF0000", text_color="#ffffff", hover_color="#AA0114", command=self.show_page1)
         self.btn1.pack(pady=10, padx=10)
 
-        self.btn2 = ctk.CTkButton(self.sidebar, text="Open-Facebook",fg_color="#5bcf40", text_color="#ffffff", hover_color="#45a92d", command=self.show_page2)
+        self.btn2 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดตัว",fg_color="#5bcf40", text_color="#ffffff", hover_color="#45a92d", command=self.show_page2)
         self.btn2.pack(pady=10, padx=10)
 
-        self.btn3 = ctk.CTkButton(self.sidebar, text="Facebook-Uid",fg_color="#1877F2", text_color="#ffffff", hover_color="#4267B2", command=self.show_page3)
+        self.btn3 = ctk.CTkButton(self.sidebar, text="โปรแกรมค้นหาไอดี",fg_color="#1877F2", text_color="#ffffff", hover_color="#4267B2", command=self.show_page3)
         self.btn3.pack(pady=10, padx=10)
 
         self.btn4 = ctk.CTkButton(self.sidebar, text="Coming Soon", command=self.show_page4)
@@ -130,12 +135,13 @@ class MyApp(ctk.CTk):
         for text in search_texts:
             full_link = link + text.strip()  # รวมลิงก์กับหมายเลข
             webbrowser.open(full_link)
+            time.sleep(1)
         
 
     def show_page3(self):
         self.clear_content()
 
-        # เลย์เอาท์ส่วน URL
+          # เลย์เอาท์ส่วน URL
         url_label = ctk.CTkLabel(self.content_frame, text="ใส่ลิ้ง-Url-Facebook :")
         url_label.place(x=10, y=10)
 
@@ -150,65 +156,43 @@ class MyApp(ctk.CTk):
         self.clear_button = ctk.CTkButton(self.content_frame, text="ลบข้อความ", width=100, command=self.clear_data)
         self.clear_button.place(x=120, y=50)
 
-        # Copy button
-        self.clear_button = ctk.CTkButton(self.content_frame, text="ลบข้อความ", width=100)
-        self.clear_button.place(x=230, y=50)
+        # Textbox สำหรับแสดงข้อมูล UID
+        self.output_textbox = ctk.CTkTextbox(self.content_frame, width=840, height=300, fg_color="#eaecea", font=("TH Sarabun New", 12))
+        self.output_textbox.place(x=10, y=100)
 
-        # # การแสดงผล User ID
-        # self.result_display = ctk.CTkTextbox(self.content_frame, width=840, height=300,fg_color="#eaecea")
-        # self.result_display.place(x=10, y=90)
-        # self.result_display.configure(state="disabled")  # ทำให้ไม่สามารถแก้ไขได้
-
-         # Table header (หัวข้อของตาราง)
-        self.table_headers = ["User ID", "Name", "Age", "Location"]
-        self.create_table_header()
+        # Text
+        url_label = ctk.CTkLabel(self.content_frame, text="คำแนะนำในการใช้ : ")
+        url_label.place(x=10, y=410)
 
     def fetch_data(self):
-        # ตัวอย่างการดึงข้อมูลเมื่อกดปุ่ม "เริ่มทำงาน"
-        data = [
-            ["12345", "John Doe", "30", "Bangkok"],
-            ["67890", "Jane Smith", "25", "Chiang Mai"],
-            ["678901", "Jane Smith", "25", "Chiang Mai"],
-            ["678902", "Jane Smith", "25", "Chiang Mai"],
-            ["678905", "Jane Smith", "25", "Chiang Mai"],
-            ["678907", "Jane Smith", "25", "Chiang Mai"],
-            ["678908", "Jane Smith", "25", "Chiang Mai"],
-            ["6789077", "Jane Smith", "25", "Chiang Mai"],
-            ["6789068", "Jane Smith", "25", "Chiang Mai"],
-            ["6789022", "Jane Smith", "25", "Chiang Mai"],
-            ["678905", "Jane Smith", "25", "Chiang Mai"],
-            ["678903", "Jane Smith", "25", "Chiang Mai"]
-        ]
-        self.display_table(data)
+        # รับ URL ที่ผู้ใช้กรอก
+        url = self.url_entry.get().strip()
+        if url:
+            try:
+                # ส่งคำขอ HTTP ไปที่ URL ของโปรไฟล์
+                response = requests.get(url)
 
-    def display_table(self, data):
-        # ฟังก์ชันสำหรับแสดงผลตาราง
-        row_offset = 90  # ค่าเริ่มต้นของตำแหน่ง Y
-        column_width = 150  # กำหนดความกว้างของคอลัมน์
+                # ตรวจสอบสถานะการตอบกลับ
+                if response.status_code == 200:
+                    soup = BeautifulSoup(response.text, 'html.parser')
 
-        for i, row in enumerate(data):
-            for j, value in enumerate(row):
-                label = ctk.CTkLabel(self.content_frame, text=value, width=column_width)
-                label.place(x=j * column_width + 10, y=row_offset + (i * 30))
-                
-    def create_table_header(self):
-        # ฟังก์ชันสำหรับสร้างส่วนหัวของตาราง
-        row_offset = 90
-        column_width = 150
-
-        for i, header in enumerate(self.table_headers):
-            label = ctk.CTkLabel(self.content_frame, text=header, width=column_width)
-            label.place(x=i * column_width + 10, y=row_offset)
+                    # ค้นหาแท็กที่มีข้อมูล UID
+                    try:
+                        # ดึง UID จาก meta tag (ต้องปรับให้ตรงตามโครงสร้างของหน้า Facebook จริง)
+                        user_id = soup.find('meta', {'property': 'al:ios:url'})['content'].split('/')[-1]
+                        user_name = soup.title.string.strip()  # ดึงชื่อจาก title ของหน้า
+                        
+                        # แสดงผลใน Textbox
+                        self.output_textbox.insert("end", f"UID ของผู้ใช้คือ: {user_id}\nชื่อผู้ใช้: {user_name}\n\n")
+                    except Exception as e:
+                        self.output_textbox.insert("end", f"ไม่สามารถหาหมายเลข UID ได้: {e}\n")
+                else:
+                    self.output_textbox.insert("end", "ไม่สามารถเข้าถึงหน้าโปรไฟล์ได้\n")
+            except Exception as e:
+                self.output_textbox.insert("end", f"เกิดข้อผิดพลาด: {e}\n")
 
     def clear_data(self):
-        # ฟังก์ชันลบข้อมูลที่แสดง
-        self.clear_content()
-        self.show_page3()
-       
-      
-
-
-            
+        self.output_textbox.delete("1.0", "end")
 
   
 
