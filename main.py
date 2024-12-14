@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import requests
 import pyperclip
 import webbrowser
 from selenium import webdriver
@@ -7,11 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-import requests
 from bs4 import BeautifulSoup
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
 
 class MyApp(ctk.CTk):
     def __init__(self):
@@ -26,16 +27,16 @@ class MyApp(ctk.CTk):
         self.sidebar.pack(side="left", fill="y")
 
         # เพิ่มปุ่มใน sidebar
-        self.btn1 = ctk.CTkButton(self.sidebar, text="YouTube", fg_color="#FF0000", text_color="#ffffff", hover_color="#AA0114", command=self.show_page1)
+        self.btn1 = ctk.CTkButton(self.sidebar, text="YouTube", command=self.show_page1)  #fg_color="#FF0000", text_color="#ffffff", hover_color="#AA0114"
         self.btn1.pack(pady=10, padx=10)
 
-        self.btn2 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดตัว",fg_color="#5bcf40", text_color="#ffffff", hover_color="#45a92d", command=self.show_page2)
+        self.btn2 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดตัว", command=self.show_page2)
         self.btn2.pack(pady=10, padx=10)
 
-        self.btn3 = ctk.CTkButton(self.sidebar, text="โปรแกรมค้นหาไอดี",fg_color="#1877F2", text_color="#ffffff", hover_color="#4267B2", command=self.show_page3)
+        self.btn3 = ctk.CTkButton(self.sidebar, text="โปรแกรมค้นหาไอดี", command=self.show_page3)
         self.btn3.pack(pady=10, padx=10)
 
-        self.btn4 = ctk.CTkButton(self.sidebar, text="Coming Soon", command=self.show_page4)
+        self.btn4 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดคำผิด", command=self.show_page4)
         self.btn4.pack(pady=10, padx=10)
 
         self.btn5 = ctk.CTkButton(self.sidebar, text="Coming Soon", command=self.show_page5)
@@ -142,27 +143,37 @@ class MyApp(ctk.CTk):
         self.clear_content()
 
           # เลย์เอาท์ส่วน URL
-        url_label = ctk.CTkLabel(self.content_frame, text="ใส่ลิ้ง-Url-Facebook :")
+        url_label = ctk.CTkLabel(self.content_frame, text="ใส่ลิ้ง-Facebook :")
         url_label.place(x=10, y=10)
 
-        self.url_entry = ctk.CTkEntry(self.content_frame, width=720)
-        self.url_entry.place(x=130, y=10)
+        self.url_entry = ctk.CTkEntry(self.content_frame, width=635)
+        self.url_entry.place(x=110, y=10)
+
+        url_label = ctk.CTkLabel(self.content_frame, text="ใส่ลิ้ง-Instagram :")
+        url_label.place(x=10, y=50)
+
+        self.url_instadram = ctk.CTkEntry(self.content_frame, width=635)
+        self.url_instadram.place(x=110, y=50)
+
 
         # Fetch button
-        self.fetch_button = ctk.CTkButton(self.content_frame, text="เริ่มทำงาน", width=100, command=self.fetch_data)
-        self.fetch_button.place(x=10, y=50)
+        self.fetch_button = ctk.CTkButton(self.content_frame, text="ค้นหา", width=100, command=self.fetch_data)
+        self.fetch_button.place(x=750, y=10)
+
+        self.fetch_button = ctk.CTkButton(self.content_frame, text="ค้นหา", width=100, command=self.fetch_instagram_data)
+        self.fetch_button.place(x=750, y=50)
 
         # Clear button
         self.clear_button = ctk.CTkButton(self.content_frame, text="ลบข้อความ", width=100, command=self.clear_data)
-        self.clear_button.place(x=120, y=50)
+        self.clear_button.place(x=10, y=410)
 
         # Textbox สำหรับแสดงข้อมูล UID
-        self.output_textbox = ctk.CTkTextbox(self.content_frame, width=840, height=300, fg_color="#eaecea", font=("TH Sarabun New", 12))
-        self.output_textbox.place(x=10, y=100)
+        self.output_textbox = ctk.CTkTextbox(self.content_frame, width=840, height=280, fg_color="#eaecea", font=("TH Sarabun New", 12))
+        self.output_textbox.place(x=10, y=120)
 
         # Text
-        url_label = ctk.CTkLabel(self.content_frame, text="คำแนะนำในการใช้ : ")
-        url_label.place(x=10, y=410)
+        url_label = ctk.CTkLabel(self.content_frame, text="คำแนะนำในการใช้ : เข้าไปที่หน้าโปรไฟล์ที่ต้องการหาไอดีจากนั้นคัดลอกลิ้งมาใส่")
+        url_label.place(x=10, y=90)
 
     def fetch_data(self):
         # รับ URL ที่ผู้ใช้กรอก
@@ -183,7 +194,7 @@ class MyApp(ctk.CTk):
                         user_name = soup.title.string.strip()  # ดึงชื่อจาก title ของหน้า
                         
                         # แสดงผลใน Textbox
-                        self.output_textbox.insert("end", f"UID ของผู้ใช้คือ: {user_id}\nชื่อผู้ใช้: {user_name}\n\n")
+                        self.output_textbox.insert("end", f"ชื่อผู้ใช้: {user_name}\nUID ของผู้ใช้คือ: {user_id}\n\n")
                     except Exception as e:
                         self.output_textbox.insert("end", f"ไม่สามารถหาหมายเลข UID ได้: {e}\n")
                 else:
@@ -194,7 +205,45 @@ class MyApp(ctk.CTk):
     def clear_data(self):
         self.output_textbox.delete("1.0", "end")
 
-  
+    def fetch_instagram_data(self):
+        # รับ URL ที่ผู้ใช้กรอก
+        instagram_url = self.url_instadram.get().strip()
+        if not instagram_url:
+            self.output_textbox.insert("end", "กรุณาใส่ลิงก์ Instagram\n")
+            return
+
+        try:
+            # ใช้ Selenium เพื่อดึง UID
+            self.output_textbox.insert("end", "กำลังโหลดข้อมูล...\n")
+            driver = webdriver.Chrome()  # กำหนด WebDriver (ต้องมี chromedriver ใน PATH)
+            driver.get(instagram_url)
+            time.sleep(3)  # รอให้หน้าเว็บโหลด
+
+            try:
+                # ดึง UID จาก script ที่เก็บ JSON
+                script = driver.find_element(By.XPATH, "//script[contains(text(), 'profilePage_')]")
+                uid = script.get_attribute('innerHTML').split('profilePage_')[1].split('"')[0]
+
+                # ดึงชื่อโปรไฟล์จาก title ของหน้า
+                title = driver.title  # ดึงค่า Title ของหน้า
+                profile_name = title.split("•")[0].strip()  # ชื่อโปรไฟล์มักอยู่ก่อน •
+
+                # แสดง UID ใน Textbox
+                self.output_textbox.insert("end", f"Instagram UID: {uid}\n")
+                self.output_textbox.insert("end", f"ชื่อโปรไฟล์: {profile_name}\n\n")
+            except Exception as e:
+                self.output_textbox.insert("end", f"ไม่สามารถดึง UID ได้: {e}\n")
+            finally:
+                driver.quit()
+
+        except Exception as e:
+            self.output_textbox.insert("end", f"เกิดข้อผิดพลาด: {e}\n")
+
+
+
+
+
+
 
     def show_page4(self):
         self.clear_content()
