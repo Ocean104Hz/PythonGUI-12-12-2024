@@ -18,7 +18,7 @@ class MyApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("แอปพลิเคชันพร้อม Sidebar")
+        self.title("โปรแกรมสำหรับฝั่งบอด V.1.2")
         self.geometry("1020x450")
         self.resizable(False, False)
 
@@ -26,7 +26,7 @@ class MyApp(ctk.CTk):
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0, fg_color='#4eb0f5')
         self.sidebar.pack(side="left", fill="y")
 
-        # เพิ่มปุ่มใน sidebar
+        # เพิ่มปุ่มใน sidebar  หน้าเมนู -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         self.btn1 = ctk.CTkButton(self.sidebar, text="YouTube", command=self.show_page1)  #fg_color="#FF0000", text_color="#ffffff", hover_color="#AA0114"
         self.btn1.pack(pady=10, padx=10)
 
@@ -36,7 +36,7 @@ class MyApp(ctk.CTk):
         self.btn3 = ctk.CTkButton(self.sidebar, text="โปรแกรมค้นหาไอดี", command=self.show_page3)
         self.btn3.pack(pady=10, padx=10)
 
-        self.btn4 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดคำผิด", command=self.show_page4)
+        self.btn4 = ctk.CTkButton(self.sidebar, text="โปรแกรมคัดคำซ้ำ", command=self.show_page4)
         self.btn4.pack(pady=10, padx=10)
 
         self.btn5 = ctk.CTkButton(self.sidebar, text="Coming Soon", command=self.show_page5)
@@ -54,6 +54,7 @@ class MyApp(ctk.CTk):
         for widget in self.content_frame.winfo_children():
             widget.destroy()    
 
+    # หน้า1 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def show_page1(self):
         self.clear_content()
 
@@ -110,12 +111,17 @@ class MyApp(ctk.CTk):
         Copy_Text = self.output_textbox.get("0.1", "end-1c")
         pyperclip.copy(Copy_Text)
 
-
+    # หน้า2 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def show_page2(self):
         self.clear_content()
+        label = ctk.CTkLabel(self.content_frame, text="ช่องใส่ Uid-Facebook")
+        label.place(x=10, y=2)
+
+        url_label = ctk.CTkLabel(self.content_frame, text="คำแนะนำในการใช้ : นำ UIDFacebook มาใส่ในช่องคำด่านบนแล้วกดปุ่ม Open (แนะนำใส่ไม่เกิน 20-30 UID ต่อครั้ง)")
+        url_label.place(x=230, y=400)
 
         # Textbox สำหรับรับข้อมูล
-        self.input_textbox = ctk.CTkTextbox(self.content_frame, width=400, height=350, fg_color="#eaecea",font=("TH Sarabun New", 18))
+        self.input_textbox = ctk.CTkTextbox(self.content_frame, width=840, height=350, fg_color="#eaecea",font=("TH Sarabun New", 18))
         self.input_textbox.place(x=10, y=30)
        
        # ปุ่มอยู่ด้านล่าง
@@ -138,7 +144,7 @@ class MyApp(ctk.CTk):
             webbrowser.open(full_link)
             time.sleep(1)
         
-
+    # หน้า3 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def show_page3(self):
         self.clear_content()
 
@@ -234,23 +240,84 @@ class MyApp(ctk.CTk):
             except Exception as e:
                 self.output_textbox.insert("end", f"ไม่สามารถดึง UID ได้: {e}\n")
             finally:
-                driver.quit()
+                driver.quit()                                  
+
 
         except Exception as e:
             self.output_textbox.insert("end", f"เกิดข้อผิดพลาด: {e}\n")
 
-
-
-
-
-
-
+    # หน้า4 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def show_page4(self):
         self.clear_content()
-        label = ctk.CTkLabel(self.content_frame, text="Coming Soon IG-Uid")
-        label.place(x=400, y=200)
+        #คำแนะนำ
+        label0 = ctk.CTkLabel(self.content_frame, text="คำแนะนำในการใช้ : ให้นำคำมาใส่ตามหัวข้อใส่แค่2ช่องแรก จากนั้นโปรแกรมจะทำงานอัตโนมัติ")
+        label0.place(x=390, y=185)
+
+        # กล่องข้อความที่ 1
+        label1 = ctk.CTkLabel(self.content_frame, text="Facebook")
+        label1.place(x=10, y=2)
+        self.textbox1 = ctk.CTkTextbox(self.content_frame, width=275, height=150, fg_color="#eaecea", font=("TH Sarabun New", 10))
+        self.textbox1.place(x=10, y=30)
+        self.label_text1_count = ctk.CTkLabel(self.content_frame, text="จำนวนคำในช่อง : 0 ")
+        self.label_text1_count.place(x=70, y=2)
+
+        # กล่องข้อความที่ 2
+        label2 = ctk.CTkLabel(self.content_frame, text="GoogleSheet")
+        label2.place(x=290, y=2)
+        self.textbox2 = ctk.CTkTextbox(self.content_frame, width=275, height=150, fg_color="#eaecea", font=("TH Sarabun New", 10))
+        self.textbox2.place(x=290, y=30)
+        self.label_text2_count = ctk.CTkLabel(self.content_frame, text="จำนวนคำในช่อง: 0 ")
+        self.label_text2_count.place(x=370, y=2)
+
+        # กล่องข้อความที่ 3
+        label3 = ctk.CTkLabel(self.content_frame, text="กรองคำที่เหมือนกัน")
+        label3.place(x=570, y=2)
+        self.textbox3 = ctk.CTkTextbox(self.content_frame, width=275, height=150, fg_color="#eaecea", font=("TH Sarabun New", 10))
+        self.textbox3.place(x=570, y=30)
+        self.label_text3_count = ctk.CTkLabel(self.content_frame, text="จำนวนคำในช่อง: 0 ")
+        self.label_text3_count.place(x=670, y=2)
+
+        # กล่องข้อความที่ 4
+        label4 = ctk.CTkLabel(self.content_frame, text="คำที่ขาดใน Facebook")
+        label4.place(x=10, y=185)
+        self.textbox4 = ctk.CTkTextbox(self.content_frame, width=835, height=220, fg_color="#eaecea", font=("TH Sarabun New", 10))
+        self.textbox4.place(x=10, y=215)
+        self.label_text4_count = ctk.CTkLabel(self.content_frame, text="จำนวนคำในช่อง: 0 ")
+        self.label_text4_count.place(x=130, y=185)
+
+        # การจัดการเรียลไทม์
+        self.textbox1.bind("<KeyRelease>", self.update_results)
+        self.textbox2.bind("<KeyRelease>", self.update_results)
+
+    def update_results(self, event=None):
+        # ดึงข้อความจาก Textbox1 และ Textbox2
+        text1 = self.textbox1.get("1.0", "end").strip()
+        text2 = self.textbox2.get("1.0", "end").strip()
+
+        # แยกคำในแต่ละช่อง
+        words1 = set(text1.split())
+        words2 = set(text2.split())
+
+        # คำที่เหมือนกันใน Textbox1 และ Textbox2
+        common_words = words1.intersection(words2)
+        self.textbox3.delete("1.0", "end")
+        self.textbox3.insert("1.0", "\n".join(common_words))
+
+        # คำที่ไม่ซ้ำใน Textbox2 เมื่อเทียบกับ Textbox3
+        unique_words = words2 - common_words
+        self.textbox4.delete("1.0", "end")
+        self.textbox4.insert("1.0", "\n".join(unique_words))
+
+        # อัปเดตจำนวนคำ
+        self.label_text1_count.configure(text=f"จำนวนคำในช่อง: {len(words1)} ")
+        self.label_text2_count.configure(text=f"จำนวนคำในช่อง: {len(words2)} ")
+        self.label_text3_count.configure(text=f"จำนวนคำในช่อง: {len(common_words)} ")
+        self.label_text4_count.configure(text=f"จำนวนคำในช่อง: {len(unique_words)} ")
 
 
+        
+
+    # หน้า5 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def show_page5(self):
         self.clear_content()
         label = ctk.CTkLabel(self.content_frame, text="Coming Soon")
